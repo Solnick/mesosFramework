@@ -6,7 +6,6 @@ from mesoshttp.client import MesosClient
 
 
 class Test(object):
-
     class MesosFramework(threading.Thread):
 
         def __init__(self, client):
@@ -51,8 +50,9 @@ class Test(object):
 
     def status_update(self, update):
         a = 1
-#        if update['status']['state'] == 'TASK_RUNNING':
-#            self.driver.kill(update['status']['agent_id']['value'], update['status']['task_id']['value'])
+
+    #        if update['status']['state'] == 'TASK_RUNNING':
+    #            self.driver.kill(update['status']['agent_id']['value'], update['status']['task_id']['value'])
 
     def offer_received(self, offers):
         self.logger.warn('OFFER: %s' % (str(offers)))
@@ -62,7 +62,7 @@ class Test(object):
                 self.run_job(offer)
             else:
                 offer.decline()
-            i+=1
+            i += 1
 
     def run_job(self, mesos_offer):
         offer = mesos_offer.get_offer()
@@ -72,35 +72,28 @@ class Test(object):
             'task_id': {'value': uuid.uuid4().hex},
             'agent_id': {'value': offer['agent_id']['value']},
             'resources': [
-            {
-                'name': 'cpus',
-                'type': 'SCALAR',
-                'scalar': {'value': 1}
-            },
-            {
-                'name': 'mem',
-                'type': 'SCALAR',
-                'scalar': {'value': 64}
-            }
+                {
+                    'name': 'cpus',
+                    'type': 'SCALAR',
+                    'scalar': {'value': 1}
+                },
+                {
+                    'name': 'mem',
+                    'type': 'SCALAR',
+                    'scalar': {'value': 64}
+                }
             ],
-           # 'command': {'value': 'sleep 30'},
-            #'container': {
-             #   'type': 'DOCKER',
-              #  'docker': {
-              #      'image': 'debian'
-               # }
-            #},
-             'command': {'value': "curl -X POST 'https://hooks.slack.com/services/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' -H 'content-type: application/json; charset=UTF-8' -d '{\"text\" : \"Jan D.\"}'"},
-             'container': {
-                 'type': 'DOCKER',
-                 'docker': {
-                     'image': 'tutum/curl'
-                 }
-             }
+            'command': {
+                'value': "curl -X POST 'https://hooks.slack.com/services/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' -H 'content-type: application/json; charset=UTF-8' -d '{\"text\" : \"Jan D.\"}'"},
+            'container': {
+                'type': 'DOCKER',
+                'docker': {
+                    'image': 'tutum/curl'
+                }
+            }
         }
 
         mesos_offer.accept([task])
 
 
 test_mesos = Test()
-
